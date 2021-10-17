@@ -1,0 +1,44 @@
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+%matplotlib inline
+#Reading data
+df=pd.read_csv(‘E:/courses/python/Refactored_Py_DS_ML_Bootcamp-master/15-Decision-Trees-and-Random-Forests/ loan_data.csv’)
+df.head()
+df.describe()
+df.info()
+#Visulalization
+sns.pairplot(data=df)
+df.corr()
+sns.countplot(x=’credit.policy’,data=df)
+sns.distplot(df[‘fico’])
+sns.countplot(x=’purpose’, data=df, hue=’not.fully.paid’)
+sns.jointplot(x=’fico’,y=’int.rate’,data=df)
+#Handle categorical variables
+df=pd.get_dummies(df)
+df.drop(‘purpose_all_other’,axis=1)
+
+#Split test & train data
+X=df.drop(‘not.fully.paid’,axis=1)
+y=df[‘not.fully.paid’]
+from sklearn.model_selection import train_test_split
+X_train, y_train, X_test, y_test = train_test_split(X, y, test_size=0.3 , random_state=101)
+
+#Random forest model
+From sklearn.ensemble import RandomForestClassifier
+rfc= RandomForestClassifier(n_estimators=200)
+rfc.fit(X_train, y_train)
+predict=rfc.predict(X_test)
+from sklearn.metrics import confusion_matrix , classification_report
+print(classification_report(y_test, predict))
+print(confusion_matrix (y_test, predict))
+
+
+#Desicion Tree Model
+from sklearn.tree import DecisionTreeClassifier
+dtree= DecisionTreeClassifier()
+dtree.fit(X_train, y_train)
+tpredict=dtree.predict(X_test)
+print(classification_report(y_test, tpredict))
+print(confusion_matrix (y_test, tpredict))
